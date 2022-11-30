@@ -1,0 +1,10 @@
+package com.alexandru.springbootecommerce.exceptions;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class AccountNotActivated extends RuntimeException{
+    public AccountNotActivated(String message){super(message);}
+}
+
