@@ -5,7 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.aspectj.weaver.ast.Or;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -49,13 +52,21 @@ public class Product {
     )
     private Set<Category> categories;
 
-    public Product(Long productId, String name, Double price, String description, Integer availableQuantity, Set<Category> categories) {
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JoinColumn(name = "product_id")
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<Comment> comments = new ArrayList<>();
+
+    public Product(Long productId, String name, Double price, String description, Integer availableQuantity, Set<Category> categories, List<Comment> comments) {
         this.productId = productId;
         this.name = name;
         this.price = price;
         this.description = description;
         this.availableQuantity = availableQuantity;
         this.categories = new HashSet<>();
+        this.comments = new ArrayList<>();
     }
 
     public void addCategory(Category category) {

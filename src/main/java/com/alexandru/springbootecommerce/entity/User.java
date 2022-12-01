@@ -57,6 +57,13 @@ public class User {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Order> orders = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<Comment> comments = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -65,7 +72,9 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    public User(Long userId, String username, String firstName, String lastName, String password,String verificationCode, boolean enabled,List<Order> orders, Set<Role> roles) {
+    public User(Long userId, String username, String firstName, String lastName, String password,
+                String verificationCode, boolean enabled,List<Order> orders,
+                List<Comment> comments, Set<Role> roles) {
         this.userId = userId;
         this.username = username;
         this.firstName = firstName;
@@ -74,6 +83,7 @@ public class User {
         this.verificationCode = verificationCode;
         this.enabled = enabled;
         this.orders = new ArrayList<>();
+        this.comments = new ArrayList<>();
         this.roles = new HashSet<>();
     }
 
