@@ -20,8 +20,9 @@ public class OrderDto {
     private Long id;
     private LocalDate date;
     private Double amount;
-    private List<ProductDto> products = new ArrayList<>();
     private StatusDto status;
+    private List<ProductDto> products = new ArrayList<>();
+
 
     public static OrderDto fromOrder(Order order){
         OrderDto orderDto = OrderDto.builder()

@@ -34,7 +34,6 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final JavaMailSender mailSender;
-
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;

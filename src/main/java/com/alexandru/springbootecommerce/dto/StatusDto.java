@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StatusDto {
     private Long id;
-    private String name;
+    private String status_name;
 
     public static StatusDto fromStatus(Status status){
         return StatusDto.builder()
                 .id(status.getId())
-                .name(status.getName())
+                .status_name(status.getName())
                 .build();
     }
 }
