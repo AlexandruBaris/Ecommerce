@@ -41,6 +41,7 @@ public class Product {
     private String name;
     private Double price;
     private String description;
+    private String img;
     @Column(name = "available_quantity")
     private Integer availableQuantity;
 
@@ -59,11 +60,12 @@ public class Product {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Comment> comments = new ArrayList<>();
 
-    public Product(Long productId, String name, Double price, String description, Integer availableQuantity, Set<Category> categories, List<Comment> comments) {
+    public Product(Long productId, String name, Double price, String description, String img, Integer availableQuantity, Set<Category> categories, List<Comment> comments) {
         this.productId = productId;
         this.name = name;
         this.price = price;
         this.description = description;
+        this.img = img;
         this.availableQuantity = availableQuantity;
         this.categories = new HashSet<>();
         this.comments = new ArrayList<>();

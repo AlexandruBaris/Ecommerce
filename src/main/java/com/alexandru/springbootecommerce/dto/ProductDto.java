@@ -20,6 +20,7 @@ public class ProductDto {
     private String name;
     private Double price;
     private String description;
+    private String img;
     private Integer availableQuantity;
     private Set<CategoryDto> categories = new HashSet<>();
 
@@ -28,6 +29,7 @@ public class ProductDto {
                 .id(product.getProductId())
                 .name(product.getName())
                 .price(product.getPrice())
+                .img(product.getImg())
                 .description(product.getDescription())
                 .availableQuantity(product.getAvailableQuantity())
                 .build();

@@ -3,6 +3,7 @@ package com.alexandru.springbootecommerce.controller;
 import com.alexandru.springbootecommerce.dto.OrderDto;
 import com.alexandru.springbootecommerce.dto.ProductDetails;
 import com.alexandru.springbootecommerce.dto.ProductDto;
+import com.alexandru.springbootecommerce.repository.OrderRepository;
 import com.alexandru.springbootecommerce.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,10 +27,16 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService service;
+    private final OrderRepository repository;
 
     @GetMapping
     public ResponseEntity<?> getAllOrders(Authentication authentication){
         return ResponseEntity.ok(service.findAllOrders(authentication.getName()));
+    }
+
+    @GetMapping("/id")
+    public ResponseEntity<?> getAllO(Authentication authentication){
+        return ResponseEntity.ok(repository.findAllByStatus_id(1L));
     }
 
     @PostMapping("/save")
