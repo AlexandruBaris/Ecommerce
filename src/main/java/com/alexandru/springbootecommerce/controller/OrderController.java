@@ -27,26 +27,19 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService service;
-    private final OrderRepository repository;
 
-    @GetMapping
-    public ResponseEntity<?> getAllOrders(Authentication authentication){
-        return ResponseEntity.ok(service.findAllOrders(authentication.getName()));
-    }
-
-    @GetMapping("/id")
-    public ResponseEntity<?> getAllO(Authentication authentication){
-        return ResponseEntity.ok(repository.findAllByStatus_id(1L));
+    @GetMapping("/status/{id}")
+    public ResponseEntity<?> getAllOrdersByStatus(Authentication authentication, @PathVariable Long id){
+        return ResponseEntity.ok(service.findAllOrdersByStatus(authentication.getName(), id));
     }
 
     @PostMapping("/save")
-    //addProduct(RequestBody List<ProductDto> products, Auth auth)
     public ResponseEntity<?> addOrder(@RequestBody List<ProductDetails> products, Authentication authentication) throws MessagingException, UnsupportedEncodingException {
         return ResponseEntity.ok(service.addOrder(products, authentication.getName()));
     }
 
     @DeleteMapping("/cancel/{id}")
-    public HttpStatus deleteOrder(@PathVariable Long id, Authentication authentication){
-        return service.cancelOrder(id, authentication.getName()) ? HttpStatus.ACCEPTED : HttpStatus.BAD_REQUEST;
+    public ResponseEntity<?> deleteOrder(@PathVariable Long id, Authentication authentication){
+        return service.cancelOrder(id, authentication.getName()) ? ResponseEntity.ok(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

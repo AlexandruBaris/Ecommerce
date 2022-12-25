@@ -4,6 +4,7 @@ import com.alexandru.springbootecommerce.dto.OrderDto;
 import com.alexandru.springbootecommerce.dto.ProductDetails;
 import com.alexandru.springbootecommerce.entity.Order;
 import com.alexandru.springbootecommerce.entity.Product;
+import com.alexandru.springbootecommerce.entity.Role;
 import com.alexandru.springbootecommerce.entity.Status;
 import com.alexandru.springbootecommerce.entity.User;
 import com.alexandru.springbootecommerce.exceptions.OrderNotFound;
@@ -12,6 +13,7 @@ import com.alexandru.springbootecommerce.exceptions.StatusNotFound;
 import com.alexandru.springbootecommerce.exceptions.UserNotFoundException;
 import com.alexandru.springbootecommerce.repository.OrderRepository;
 import com.alexandru.springbootecommerce.repository.ProductRepository;
+import com.alexandru.springbootecommerce.repository.RoleRepository;
 import com.alexandru.springbootecommerce.repository.StatusRepository;
 import com.alexandru.springbootecommerce.repository.UserRepository;
 import com.alexandru.springbootecommerce.service.OrderService;
@@ -25,8 +27,10 @@ import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,14 +42,25 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final StatusRepository statusRepository;
     private final ProductRepository productRepository;
+    private final RoleRepository roleRepository;
 
     private static final long ORDER_STATUS_CREATED = 1;
     private static final long ORDER_STATUS_CANCELED = 4;
 
     @Override
-    public List<OrderDto> findAllOrders(String username) {
+    public List<OrderDto> findAllOrdersByStatus(String username, Long statusId) {
         User user = getCurrentUser(username);
+        if(statusId>4){
+            throw new OrderNotFound("Invalid status id: " + statusId);
+        }
+        if(isUserAdmin(username)){
+            return orderRepository.findAll().stream()
+                    .filter(order -> statusId.equals(order.getStatus().getId()))
+                    .map(OrderDto::fromOrder)
+                    .collect(Collectors.toList());
+        }
         return user.getOrders().stream()
+                .filter(order -> statusId.equals(order.getStatus().getId()))
                 .map(OrderDto::fromOrder)
                 .collect(Collectors.toList());
     }
@@ -66,6 +81,8 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(user);
         order.setStatus(status);
         order.addProduct(products);
+
+        user.getOrders().add(order);
 
         OrderDto orderDto = OrderDto.fromOrder(orderRepository.save(order));
         sendConfirmationEmail(user,orderDto);
@@ -145,6 +162,14 @@ public class OrderServiceImpl implements OrderService {
     private User getCurrentUser(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException("User with username " + username + " was not found"));
+    }
+
+    private boolean isUserAdmin(String username){
+        User user = getCurrentUser(username);
+        ArrayList<Long> ids = new ArrayList<>(Arrays.asList(2L,3L,4L));
+        List<Role> rls = roleRepository.findAllById(ids);
+
+        return user.getRoles().containsAll(rls);
     }
 
 }

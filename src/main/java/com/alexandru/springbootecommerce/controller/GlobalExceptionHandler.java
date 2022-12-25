@@ -6,6 +6,7 @@ import com.alexandru.springbootecommerce.dto.ValidationExceptionResponse;
 import com.alexandru.springbootecommerce.exceptions.AccountNotActivated;
 import com.alexandru.springbootecommerce.exceptions.CategoryNotFoundException;
 import com.alexandru.springbootecommerce.exceptions.JwtAuthenticationException;
+import com.alexandru.springbootecommerce.exceptions.OrderNotFound;
 import com.alexandru.springbootecommerce.exceptions.UserAlreadyExistsException;
 import com.alexandru.springbootecommerce.exceptions.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException e, HttpServletRequest request) {
+        ErrorResponse errorResponse = ErrorResponse.builder().title(e.getMessage()).details(request.getRequestURI()).build();
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @ExceptionHandler(OrderNotFound.class)
+    public ResponseEntity<ErrorResponse> handleOrderNotFoundException(OrderNotFound e, HttpServletRequest request){
         ErrorResponse errorResponse = ErrorResponse.builder().title(e.getMessage()).details(request.getRequestURI()).build();
         return ResponseEntity.badRequest().body(errorResponse);
     }
